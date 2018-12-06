@@ -10,6 +10,9 @@ class CellAnimation {
     }
 
     run() {
+        if (this.stage === 0 || this.stage === 1) {
+            this.showEdgeAnimation()
+        }
         if (this.stage === 0) {
             if (this.direction === CellAnimation.OUT) {
                 this.showMainCellAnimation()
@@ -21,9 +24,6 @@ class CellAnimation {
                 this.step1 = -this.step1
                 this.stage = 1
             }
-        }
-        if (this.stage === 0 || this.stage === 1) {
-            this.showEdgeAnimation()
         }
         if (this.stage === 2) {
             if (this.direction === CellAnimation.OUT) {
@@ -57,8 +57,6 @@ class CellAnimation {
     }
 
     showCellAnimation(cell) {
-        stroke(49)
-        strokeWeight(1)
         cell.showAt((cell.size + this.progress1 * 0.2 * cell.size), color(255, 255 ,0), 49)
     }
 
@@ -70,8 +68,7 @@ class CellAnimation {
             } else {
                 animation_pos = p5.Vector.lerp(neighbor.pos, this.cell.pos, this.progress2)
             }
-            stroke(49)
-            strokeWeight(1)
+            noStroke()
             fill(255, 255, 0)
             ellipse(animation_pos.x, animation_pos.y, 20, 20)
         }

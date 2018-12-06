@@ -21,7 +21,6 @@ function setup() {
     cell_dragged = new Cell(0, 0)
     background_color = 255
     createDefaultGame()
-    textFont(font)
 }
 
 function draw() {
@@ -45,6 +44,7 @@ function draw() {
             animations.splice(animations.indexOf(animation), 1)
         }
     }
+    showMode()
 }
 
 function mousePressed() {
@@ -217,5 +217,19 @@ function checkWin() {
         background_color = color(0, 180, 0)
     } else {
         background_color = 255
+    }
+}
+
+function showMode() {
+    noStroke()
+    textAlign(CENTER, TOP)
+    textFont('Aria')
+    textStyle(BOLD)
+    textSize(25)
+    fill(49)
+    if (game_stage === BEFORE_GAME) {
+        text('编辑模式', width / 2, 10)
+    } else {
+        text('游戏模式', width / 2, 10)
     }
 }

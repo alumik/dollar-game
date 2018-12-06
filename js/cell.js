@@ -12,16 +12,17 @@ class Cell {
     }
 
     show() {
-        noStroke()
         this.showAt(this.size, 49, 255)
     }
 
     showAt(size, color, text_color) {
+        noStroke()
         fill(color)
         ellipse(this.pos.x, this.pos.y, size, size)
 
         if (this.show_num) {
             textAlign(CENTER, CENTER)
+            textFont(font)
             textSize(35)
             fill(text_color)
             text(this.num, this.pos.x, this.pos.y)
