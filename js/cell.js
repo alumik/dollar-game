@@ -1,7 +1,7 @@
 class Cell {
     constructor(x, y, index) {
         this.index = index
-        this.size = 40
+        this.size = 50
         this.pos = createVector(x, y)
         this.num = 0
         this.neighbors = []
@@ -12,7 +12,7 @@ class Cell {
     }
 
     show() {
-        this.showAt(this.size, 0, 255)
+        this.showAt(this.size, 49, 255)
     }
 
     showAt(size, color, text_color) {
@@ -35,7 +35,7 @@ class Cell {
         }
 
         if (this.mouse_in) {
-            stroke(255)
+            stroke(255, 255, 0)
             strokeWeight(3)
             noFill()
             ellipse(this.pos.x, this.pos.y, size, size)
@@ -51,7 +51,7 @@ class Cell {
     }
 
     static showEdge(cell_a, cell_b) {
-        stroke(0)
+        stroke(49)
         strokeWeight(5)
         line(cell_a.pos.x, cell_a.pos.y, cell_b.pos.x, cell_b.pos.y)
     }

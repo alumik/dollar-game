@@ -14,7 +14,7 @@ let animations = []
 function setup() {
     createCanvas(1000, 700)
     cell_dragged = new Cell(0, 0)
-    background_color = 180
+    background_color = 255
     createDefaultGame()
 }
 
@@ -210,6 +210,6 @@ function checkWin() {
     if (win) {
         background_color = color(0, 180, 0)
     } else {
-        background_color = 180
+        background_color = 255
     }
 }

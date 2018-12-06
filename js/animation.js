@@ -57,7 +57,7 @@ class CellAnimation {
     }
 
     showCellAnimation(cell) {
-        cell.showAt((cell.size + this.progress1 * 0.2 * cell.size), color(255, 255 ,0), 0)
+        cell.showAt((cell.size + this.progress1 * 0.2 * cell.size), color(255, 255 ,0), 49)
     }
 
     showEdgeAnimation() {
