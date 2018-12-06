@@ -25,7 +25,7 @@ class Cell {
 
         if (this.active) {
             stroke(0, 255, 0)
-            strokeWeight(5)
+            strokeWeight(3)
             noFill()
             ellipse(this.pos.x, this.pos.y, this.size, this.size)
         }
@@ -38,21 +38,17 @@ class Cell {
         }
     }
 
-    showLink() {
+    showEdge() {
         for (let neighor of this.neighbors) {
             if (this.index < neighor.index) {
-                Cell.showLink(this, neighor)
+                Cell.showEdge(this, neighor)
             }
         }
     }
 
-    static showLink(cell_a, cell_b) {
+    static showEdge(cell_a, cell_b) {
         stroke(0)
         strokeWeight(5)
         line(cell_a.pos.x, cell_a.pos.y, cell_b.pos.x, cell_b.pos.y)
-    }
-
-    flipState() {
-        this.active = !this.active
     }
 }

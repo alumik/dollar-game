@@ -20,6 +20,6 @@ function createDefaultGame() {
     d.neighbors.push(a, b, e)
     e.neighbors.push(d)
     cells.push(a, b, c, d, e)
-    g_cell_index = 5
-    g_edges_count = 5
+    cell_index = 5
+    edges_count = 5
 }

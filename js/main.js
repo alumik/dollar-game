@@ -1,21 +1,20 @@
 const BEFORE_GAME = 0
 const IN_GAME = 1
 
-let g_game_state = BEFORE_GAME
-let g_edges_count = 0
-let g_cell_index = 0
 let background_color
-let c_active_cell
-let c_drag_cell
-let c_press_cell
-let c_animate_cell
+let game_stage = BEFORE_GAME
+let edges_count = 0
 let cells = []
+let cell_index = 0
+let cell_active
+let cell_dragged
+let cell_pressed
 let animation
 
 function setup() {
-    createCanvas(1024, 768)
-    c_drag_cell = new Cell(0, 0, null)
-    background_color = color(180)
+    createCanvas(1000, 700)
+    cell_dragged = new Cell(0, 0)
+    background_color = 180
     createDefaultGame()
 }
 
@@ -23,7 +22,7 @@ function draw() {
     background(background_color)
     mouseDragHandler()
     for (let cell of cells) {
-        cell.showLink()
+        cell.showEdge()
     }
     if (animation) {
         animation.run()
@@ -34,150 +33,145 @@ function draw() {
 }
 
 function mousePressed() {
-    c_press_cell = null
-    if (g_game_state === BEFORE_GAME) {
-        if (c_active_cell) {
-            c_active_cell.flipState()
-            c_active_cell.new_input = true
+    cell_pressed = null
+    if (game_stage === BEFORE_GAME) {
+        if (cell_active) {
+            cell_active.active = false
+            cell_active.new_input = true
         }
-        c_active_cell = null
-        let in_cell = getInCell()
+        cell_active = null
+        let current_cell = getCell()
         if (mouseButton === LEFT) {
-            if (in_cell) {
-                c_press_cell = in_cell
-            } else if (!isNear()) {
-                let new_cell = new Cell(mouseX, mouseY, g_cell_index++)
+            if (current_cell) {
+                cell_pressed = current_cell
+            } else if (!nearCell()) {
+                let new_cell = new Cell(mouseX, mouseY, cell_index++)
                 cells.push(new_cell)
-                c_press_cell = new_cell
+                cell_pressed = new_cell
             }
         } else if (mouseButton === RIGHT) {
-            c_press_cell = in_cell
+            cell_pressed = current_cell
         }
-    } else if (g_game_state === IN_GAME) {
-        let in_cell = getInCell()
+    } else if (game_stage === IN_GAME) {
+        let in_cell = getCell()
         if (in_cell) {
-            c_press_cell = in_cell
+            cell_pressed = in_cell
         }
     }
 }
 
 function mouseReleased() {
-    if (g_game_state === BEFORE_GAME) {
-        if (mouseButton === LEFT) {
-            for (let cell of cells) {
-                if (dist(mouseX, mouseY, cell.pos.x, cell.pos.y) <= cell.size / 2) {
-                    if (cell === c_press_cell) {
-                        cell.flipState()
-                        c_active_cell = cell
-                    } else {
-                        if (c_press_cell.neighbors.indexOf(cell) === -1) {
-                            c_press_cell.neighbors.push(cell)
-                            cell.neighbors.push(c_press_cell)
-                            g_edges_count++
-                        }
+    if (game_stage === BEFORE_GAME) {
+        if (mouseButton === LEFT && cell_pressed) {
+            let current_cell = getCell()
+            if (current_cell) {
+                if (current_cell === cell_pressed) {
+                    current_cell.active = true
+                    cell_active = current_cell
+                } else {
+                    if (cell_pressed.neighbors.indexOf(current_cell) === -1) {
+                        cell_pressed.neighbors.push(current_cell)
+                        current_cell.neighbors.push(cell_pressed)
+                        edges_count++
                     }
-                    return
                 }
-            }
-            if (!isNear()) {
-                console.log(c_press_cell)
-                let new_cell = new Cell(mouseX, mouseY, g_cell_index++)
+            } else if (!nearCell()) {
+                let new_cell = new Cell(mouseX, mouseY, cell_index++)
                 cells.push(new_cell)
-                c_press_cell.neighbors.push(new_cell)
-                new_cell.neighbors.push(c_press_cell)
-                new_cell.flipState()
-                c_active_cell = new_cell
-                g_edges_count++
+                cell_pressed.neighbors.push(new_cell)
+                new_cell.neighbors.push(cell_pressed)
+                new_cell.active = true
+                cell_active = new_cell
+                edges_count++
             }
         }
-    } else if (g_game_state === IN_GAME) {
-        let in_cell = getInCell()
-        if (in_cell && in_cell === c_press_cell) {
+    } else if (game_stage === IN_GAME) {
+        let current_cell = getCell()
+        if (current_cell && current_cell === cell_pressed) {
             if (mouseButton === LEFT) {
-                animation = new CellAnimation(in_cell, CellAnimation.OUT)
-                for (let neighbor of in_cell.neighbors) {
-                    in_cell.num--
+                animation = new CellAnimation(current_cell, CellAnimation.OUT)
+                for (let neighbor of current_cell.neighbors) {
+                    current_cell.num--
                     neighbor.num++
                 }
             } else if (mouseButton === RIGHT) {
-                animation = new CellAnimation(in_cell, CellAnimation.IN)
-                for (let neighbor of in_cell.neighbors) {
-                    in_cell.num++
+                animation = new CellAnimation(current_cell, CellAnimation.IN)
+                for (let neighbor of current_cell.neighbors) {
+                    current_cell.num++
                     neighbor.num--
                 }
             }
             checkWin()
         }
     }
-    return false
 }
 
 function mouseMoved() {
-    getInCell()
+    getCell()
 }
 
 function keyPressed() {
-    if (c_active_cell && g_game_state === BEFORE_GAME) {
+    if (game_stage === BEFORE_GAME && cell_active) {
         if (key >= '0' && key <= '9') {
-            if (c_active_cell.new_input) {
-                c_active_cell.num = parseInt(key)
-                c_active_cell.new_input = false
+            if (cell_active.new_input) {
+                cell_active.num = parseInt(key)
+                cell_active.new_input = false
             } else {
-                c_active_cell.num = parseInt('' + c_active_cell.num + key)
+                cell_active.num = parseInt('' + cell_active.num + key)
             }
-            c_active_cell.show_num = true
+            cell_active.show_num = true
         } else if (key === '-') {
-            c_active_cell.num = -c_active_cell.num
+            cell_active.num = -cell_active.num
         } else if (key === 'Delete') {
-            cells.splice(cells.indexOf(c_active_cell), 1)
-            for (let neighbor of c_active_cell.neighbors) {
-                neighbor.neighbors.splice(neighbor.neighbors.indexOf(c_active_cell), 1)
-                g_edges_count--
+            cells.splice(cells.indexOf(cell_active), 1)
+            for (let neighbor of cell_active.neighbors) {
+                neighbor.neighbors.splice(neighbor.neighbors.indexOf(cell_active), 1)
+                edges_count--
             }
         }
     }
     if (key === 'Enter') {
-        if (checkGame()) {
-            if (c_active_cell) {
-                c_active_cell.flipState()
+        if (validateGame()) {
+            if (cell_active) {
+                cell_active.active = false
             }
-            g_game_state = IN_GAME
+            game_stage = IN_GAME
         } else {
-            alert('游戏参数不正确!')
+            alert('游戏设置不正确!')
         }
     }
 }
 
 function mouseDragHandler() {
-    if (g_game_state === BEFORE_GAME && mouseIsPressed && c_press_cell) {
+    if (game_stage === BEFORE_GAME && mouseIsPressed && cell_pressed) {
         if (mouseButton === LEFT) {
-            if (dist(mouseX, mouseY, c_press_cell.pos.x, c_press_cell.pos.y) > c_press_cell.size / 2) {
-                c_drag_cell.pos.x = mouseX
-                c_drag_cell.pos.y = mouseY
-                c_drag_cell.show()
-                Cell.showLink(c_press_cell, c_drag_cell)
+            if (dist(mouseX, mouseY, cell_pressed.pos.x, cell_pressed.pos.y) > cell_pressed.size / 2) {
+                cell_dragged.pos.x = mouseX
+                cell_dragged.pos.y = mouseY
+                Cell.showEdge(cell_pressed, cell_dragged)
+                cell_dragged.show()
             }
         } else if (mouseButton === RIGHT) {
-            c_press_cell.pos.x = mouseX
-            c_press_cell.pos.y = mouseY
+            cell_pressed.pos.x = mouseX
+            cell_pressed.pos.y = mouseY
         }
     }
 }
 
-function getInCell() {
-    let in_cell
+function getCell() {
+    let current_cell
     for (let cell of cells) {
         if (dist(mouseX, mouseY, cell.pos.x, cell.pos.y) <= cell.size / 2) {
-            in_cell = cell
+            current_cell = cell
             cell.mouse_in = true
         } else {
             cell.mouse_in = false
         }
     }
-    return in_cell
+    return current_cell
 }
 
-function isNear() {
+function nearCell() {
     for (let cell of cells) {
         if (dist(mouseX, mouseY, cell.pos.x, cell.pos.y) <= cell.size) {
             return true
@@ -186,7 +180,7 @@ function isNear() {
     return false
 }
 
-function checkGame() {
+function validateGame() {
     let sum = 0
     for (let cell of cells) {
         sum += cell.num
@@ -194,8 +188,7 @@ function checkGame() {
             return false
         }
     }
-    console.log(g_edges_count - cells.length + 1 - sum)
-    return g_edges_count - cells.length + 1 <= sum
+    return edges_count - cells.length + 1 <= sum
 }
 
 function checkWin() {
@@ -207,8 +200,7 @@ function checkWin() {
     }
     if (win) {
         background_color = color(0, 180, 0)
-        console.log('游戏成功！')
     } else {
-        background_color = color(180)
+        background_color = 180
     }
 }
