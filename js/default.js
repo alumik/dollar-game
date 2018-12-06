@@ -19,7 +19,7 @@ function createDefaultGame() {
     c.neighbors.push(b)
     d.neighbors.push(a, b, e)
     e.neighbors.push(d)
-    c_cells.push(a, b, c, d, e)
+    cells.push(a, b, c, d, e)
     g_cell_index = 5
     g_edges_count = 5
 }

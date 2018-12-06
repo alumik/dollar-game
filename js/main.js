@@ -1,39 +1,34 @@
 const BEFORE_GAME = 0
 const IN_GAME = 1
-const FORWARD = true
-const BACKWARD = false
 
 let g_game_state = BEFORE_GAME
 let g_edges_count = 0
 let g_cell_index = 0
-let g_bkcolor
+let background_color
 let c_active_cell
 let c_drag_cell
 let c_press_cell
 let c_animate_cell
-let c_cells = []
-let a_running = false
-let a_step = 1 / 30
-let a_progress = 0
-let a_direction = FORWARD
+let cells = []
+let animation
 
 function setup() {
     createCanvas(1024, 768)
     c_drag_cell = new Cell(0, 0, null)
-    g_bkcolor = color(180)
+    background_color = color(180)
     createDefaultGame()
 }
 
 function draw() {
-    background(g_bkcolor)
+    background(background_color)
     mouseDragHandler()
-    for (let cell of c_cells) {
+    for (let cell of cells) {
         cell.showLink()
     }
-    if (a_running) {
-        runAnimation()
+    if (animation) {
+        animation.run()
     }
-    for (let cell of c_cells) {
+    for (let cell of cells) {
         cell.show()
     }
 }
@@ -52,7 +47,7 @@ function mousePressed() {
                 c_press_cell = in_cell
             } else if (!isNear()) {
                 let new_cell = new Cell(mouseX, mouseY, g_cell_index++)
-                c_cells.push(new_cell)
+                cells.push(new_cell)
                 c_press_cell = new_cell
             }
         } else if (mouseButton === RIGHT) {
@@ -69,7 +64,7 @@ function mousePressed() {
 function mouseReleased() {
     if (g_game_state === BEFORE_GAME) {
         if (mouseButton === LEFT) {
-            for (let cell of c_cells) {
+            for (let cell of cells) {
                 if (dist(mouseX, mouseY, cell.pos.x, cell.pos.y) <= cell.size / 2) {
                     if (cell === c_press_cell) {
                         cell.flipState()
@@ -87,7 +82,7 @@ function mouseReleased() {
             if (!isNear()) {
                 console.log(c_press_cell)
                 let new_cell = new Cell(mouseX, mouseY, g_cell_index++)
-                c_cells.push(new_cell)
+                cells.push(new_cell)
                 c_press_cell.neighbors.push(new_cell)
                 new_cell.neighbors.push(c_press_cell)
                 new_cell.flipState()
@@ -99,19 +94,13 @@ function mouseReleased() {
         let in_cell = getInCell()
         if (in_cell && in_cell === c_press_cell) {
             if (mouseButton === LEFT) {
-                stopAnimation()
-                c_animate_cell = in_cell
-                a_direction = FORWARD
-                a_running = true
+                animation = new CellAnimation(in_cell, CellAnimation.OUT)
                 for (let neighbor of in_cell.neighbors) {
                     in_cell.num--
                     neighbor.num++
                 }
             } else if (mouseButton === RIGHT) {
-                stopAnimation()
-                c_animate_cell = in_cell
-                a_direction = BACKWARD
-                a_running = true
+                animation = new CellAnimation(in_cell, CellAnimation.IN)
                 for (let neighbor of in_cell.neighbors) {
                     in_cell.num++
                     neighbor.num--
@@ -140,7 +129,7 @@ function keyPressed() {
         } else if (key === '-') {
             c_active_cell.num = -c_active_cell.num
         } else if (key === 'Delete') {
-            c_cells.splice(c_cells.indexOf(c_active_cell), 1)
+            cells.splice(cells.indexOf(c_active_cell), 1)
             for (let neighbor of c_active_cell.neighbors) {
                 neighbor.neighbors.splice(neighbor.neighbors.indexOf(c_active_cell), 1)
                 g_edges_count--
@@ -177,7 +166,7 @@ function mouseDragHandler() {
 
 function getInCell() {
     let in_cell
-    for (let cell of c_cells) {
+    for (let cell of cells) {
         if (dist(mouseX, mouseY, cell.pos.x, cell.pos.y) <= cell.size / 2) {
             in_cell = cell
             cell.mouse_in = true
@@ -189,7 +178,7 @@ function getInCell() {
 }
 
 function isNear() {
-    for (let cell of c_cells) {
+    for (let cell of cells) {
         if (dist(mouseX, mouseY, cell.pos.x, cell.pos.y) <= cell.size) {
             return true
         }
@@ -199,52 +188,27 @@ function isNear() {
 
 function checkGame() {
     let sum = 0
-    for (let cell of c_cells) {
+    for (let cell of cells) {
         sum += cell.num
         if (!cell.show_num) {
             return false
         }
     }
-    console.log(g_edges_count - c_cells.length + 1 - sum)
-    return g_edges_count - c_cells.length + 1 <= sum
+    console.log(g_edges_count - cells.length + 1 - sum)
+    return g_edges_count - cells.length + 1 <= sum
 }
 
 function checkWin() {
     let win = true
-    for (let cell of c_cells) {
+    for (let cell of cells) {
         if (cell.num < 0) {
             win = false
         }
     }
     if (win) {
-        g_bkcolor = color(0, 180, 0)
+        background_color = color(0, 180, 0)
         console.log('游戏成功！')
     } else {
-        g_bkcolor = color(180)
+        background_color = color(180)
     }
-}
-
-function runAnimation() {
-    for (let neighbor of c_animate_cell.neighbors) {
-        let a_pos
-        if (a_direction === FORWARD) {
-            a_pos = p5.Vector.lerp(c_animate_cell.pos, neighbor.pos, a_progress)
-        } else {
-            a_pos = p5.Vector.lerp(neighbor.pos, c_animate_cell.pos, a_progress)
-        }
-        noStroke()
-        fill(255, 255, 0)
-        ellipse(a_pos.x, a_pos.y, 20, 20)
-    }
-
-    a_progress += a_step
-    if (a_progress > 1) {
-        stopAnimation()
-    }
-}
-
-function stopAnimation() {
-    a_running = false
-    a_progress = 0
-    c_animate_cell = null
 }
