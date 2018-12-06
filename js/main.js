@@ -1,5 +1,7 @@
 const BEFORE_GAME = 0
 const IN_GAME = 1
+const FORWARD = true
+const BACKWARD = false
 
 let g_game_state = BEFORE_GAME
 let g_edges_count = 0
@@ -7,7 +9,12 @@ let g_cell_index = 0
 let c_active_cell
 let c_drag_cell
 let c_press_cell
+let c_animate_cell
 let c_cells = []
+let a_running = false
+let a_step = 1 / 30
+let a_progress = 0
+let a_direction = FORWARD
 
 function setup() {
     createCanvas(1024, 768)
@@ -19,6 +26,11 @@ function draw() {
     mouseDragHandler()
     for (let cell of c_cells) {
         cell.showLink()
+    }
+    if (a_running) {
+        runAnimation()
+    }
+    for (let cell of c_cells) {
         cell.show()
     }
 }
@@ -83,11 +95,19 @@ function mouseReleased() {
         let in_cell = getInCell()
         if (in_cell && in_cell === c_press_cell) {
             if (mouseButton === LEFT) {
+                stopAnimation()
+                c_animate_cell = in_cell
+                a_direction = FORWARD
+                a_running = true
                 for (let neighbor of in_cell.neighbors) {
                     in_cell.num--
                     neighbor.num++
                 }
             } else if (mouseButton === RIGHT) {
+                stopAnimation()
+                c_animate_cell = in_cell
+                a_direction = BACKWARD
+                a_running = true
                 for (let neighbor of in_cell.neighbors) {
                     in_cell.num++
                     neighbor.num--
@@ -195,4 +215,29 @@ function keyPressed() {
             alert('游戏参数不正确!')
         }
     }
+}
+
+function runAnimation() {
+    for (let neighbor of c_animate_cell.neighbors) {
+        let a_pos
+        if (a_direction === FORWARD) {
+            a_pos = p5.Vector.lerp(c_animate_cell.pos, neighbor.pos, a_progress)
+        } else {
+            a_pos = p5.Vector.lerp(neighbor.pos, c_animate_cell.pos, a_progress)
+        }
+        noStroke()
+        fill(255, 255, 0)
+        ellipse(a_pos.x, a_pos.y, 20, 20)
+    }
+
+    a_progress += a_step
+    if (a_progress > 1) {
+        stopAnimation()
+    }
+}
+
+function stopAnimation() {
+    a_running = false
+    a_progress = 0
+    c_animate_cell = null
 }
