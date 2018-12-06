@@ -9,7 +9,7 @@ let cell_index = 0
 let cell_active
 let cell_dragged
 let cell_pressed
-let animation
+let animations = []
 
 function setup() {
     createCanvas(1000, 700)
@@ -23,12 +23,21 @@ function draw() {
     mouseDragHandler()
     for (let cell of cells) {
         cell.showEdge()
+        cell.show()
     }
-    if (animation) {
+    for (let animation of animations) {
         animation.run()
     }
-    for (let cell of cells) {
-        cell.show()
+    if (frameCount % 600 === 0) {
+        let to_be_deleted = []
+        for (let animation of animations) {
+            if (animation.stage === 3) {
+                to_be_deleted.push(animation)
+            }
+        }
+        for (let animation of to_be_deleted) {
+            animations.splice(animations.indexOf(animation), 1)
+        }
     }
 }
 
@@ -89,13 +98,13 @@ function mouseReleased() {
         let current_cell = getCell()
         if (current_cell && current_cell === cell_pressed) {
             if (mouseButton === LEFT) {
-                animation = new CellAnimation(current_cell, CellAnimation.OUT)
+                animations.push(new CellAnimation(current_cell, CellAnimation.OUT))
                 for (let neighbor of current_cell.neighbors) {
                     current_cell.num--
                     neighbor.num++
                 }
             } else if (mouseButton === RIGHT) {
-                animation = new CellAnimation(current_cell, CellAnimation.IN)
+                animations.push(new CellAnimation(current_cell, CellAnimation.IN))
                 for (let neighbor of current_cell.neighbors) {
                     current_cell.num++
                     neighbor.num--

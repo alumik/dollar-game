@@ -12,14 +12,18 @@ class Cell {
     }
 
     show() {
+        this.showAt(this.size, 0, 255)
+    }
+
+    showAt(size, color, text_color) {
         noStroke()
-        fill(0)
-        ellipse(this.pos.x, this.pos.y, this.size, this.size)
+        fill(color)
+        ellipse(this.pos.x, this.pos.y, size, size)
 
         if (this.show_num) {
             textAlign(CENTER, CENTER)
             textSize(20)
-            fill(255)
+            fill(text_color)
             text(this.num, this.pos.x, this.pos.y)
         }
 
@@ -27,14 +31,14 @@ class Cell {
             stroke(0, 255, 0)
             strokeWeight(3)
             noFill()
-            ellipse(this.pos.x, this.pos.y, this.size, this.size)
+            ellipse(this.pos.x, this.pos.y, size, size)
         }
 
         if (this.mouse_in) {
             stroke(255)
             strokeWeight(3)
             noFill()
-            ellipse(this.pos.x, this.pos.y, this.size, this.size)
+            ellipse(this.pos.x, this.pos.y, size, size)
         }
     }
 
