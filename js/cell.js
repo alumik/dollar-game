@@ -31,7 +31,7 @@ class Cell {
         }
 
         if (this.mouse_in) {
-            stroke(255, 0, 0)
+            stroke(255)
             strokeWeight(3)
             noFill()
             ellipse(this.pos.x, this.pos.y, this.size, this.size)
