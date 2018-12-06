@@ -22,7 +22,7 @@ class Cell {
 
         if (this.show_num) {
             textAlign(CENTER, CENTER)
-            textSize(20)
+            textSize(35)
             fill(text_color)
             text(this.num, this.pos.x, this.pos.y)
         }

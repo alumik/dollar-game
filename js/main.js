@@ -1,6 +1,7 @@
 const BEFORE_GAME = 0
 const IN_GAME = 1
 
+let font
 let background_color
 let game_stage = BEFORE_GAME
 let edges_count = 0
@@ -11,11 +12,16 @@ let cell_dragged
 let cell_pressed
 let animations = []
 
+function preload() {
+    font = loadFont('font/AmericanTypewriterStd-Med.otf')
+}
+
 function setup() {
     createCanvas(1000, 700)
     cell_dragged = new Cell(0, 0)
     background_color = 255
     createDefaultGame()
+    textFont(font)
 }
 
 function draw() {
