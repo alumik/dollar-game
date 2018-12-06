@@ -2,6 +2,7 @@ class Cell {
     constructor(x, y, index) {
         this.index = index
         this.size = 50
+        this.text_size = 35
         this.pos = createVector(x, y)
         this.num = 0
         this.neighbors = []
@@ -23,7 +24,7 @@ class Cell {
         if (this.show_num) {
             textAlign(CENTER, CENTER)
             textFont(font)
-            textSize(35)
+            textSize(this.text_size)
             fill(text_color)
             text(this.num, this.pos.x, this.pos.y)
         }
@@ -48,6 +49,14 @@ class Cell {
             if (this.index < neighor.index) {
                 Cell.showEdge(this, neighor)
             }
+        }
+    }
+
+    recalculateTextSize() {
+        textSize(this.text_size)
+        while (textWidth('' + this.num) > this.size - 5) {
+            this.text_size -= 5
+            textSize(this.text_size)
         }
     }
 

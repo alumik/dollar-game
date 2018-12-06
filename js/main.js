@@ -108,14 +108,17 @@ function mouseReleased() {
                 for (let neighbor of current_cell.neighbors) {
                     current_cell.num--
                     neighbor.num++
+                    neighbor.recalculateTextSize()
                 }
             } else if (mouseButton === RIGHT) {
                 animations.push(new CellAnimation(current_cell, CellAnimation.IN))
                 for (let neighbor of current_cell.neighbors) {
                     current_cell.num++
                     neighbor.num--
+                    neighbor.recalculateTextSize()
                 }
             }
+            current_cell.recalculateTextSize()
             checkWin()
         }
     }
