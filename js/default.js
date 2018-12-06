@@ -1,9 +1,9 @@
 function createDefaultGame() {
-    let a = new Cell(width / 2, height / 2 - 100, 0)
-    let b = new Cell(width / 2 + 100, height / 2, 1)
-    let c = new Cell(width / 2 - 100, height / 2, 2)
-    let d = new Cell(width / 2, height / 2 + 100, 3)
-    let e = new Cell(width / 2 - 100, height / 2 + 100, 4)
+    let a = new Cell(width / 2, height / 2 - 130, 0)
+    let b = new Cell(width / 2 + 130, height / 2, 1)
+    let c = new Cell(width / 2 - 130, height / 2, 2)
+    let d = new Cell(width / 2, height / 2 + 130, 3)
+    let e = new Cell(width / 2 - 130, height / 2 + 130, 4)
     a.num = 1
     b.num = -2
     c.num = -1

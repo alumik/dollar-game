@@ -57,6 +57,8 @@ class CellAnimation {
     }
 
     showCellAnimation(cell) {
+        stroke(49)
+        strokeWeight(1)
         cell.showAt((cell.size + this.progress1 * 0.2 * cell.size), color(255, 255 ,0), 49)
     }
 
@@ -68,7 +70,8 @@ class CellAnimation {
             } else {
                 animation_pos = p5.Vector.lerp(neighbor.pos, this.cell.pos, this.progress2)
             }
-            noStroke()
+            stroke(49)
+            strokeWeight(1)
             fill(255, 255, 0)
             ellipse(animation_pos.x, animation_pos.y, 20, 20)
         }
