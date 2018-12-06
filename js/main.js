@@ -123,6 +123,42 @@ function mouseReleased() {
     return false
 }
 
+function mouseMoved() {
+    getInCell()
+}
+
+function keyPressed() {
+    if (c_active_cell && g_game_state === BEFORE_GAME) {
+        if (key >= '0' && key <= '9') {
+            if (c_active_cell.new_input) {
+                c_active_cell.num = parseInt(key)
+                c_active_cell.new_input = false
+            } else {
+                c_active_cell.num = parseInt('' + c_active_cell.num + key)
+            }
+            c_active_cell.show_num = true
+        } else if (key === '-') {
+            c_active_cell.num = -c_active_cell.num
+        } else if (key === 'Delete') {
+            c_cells.splice(c_cells.indexOf(c_active_cell), 1)
+            for (let neighbor of c_active_cell.neighbors) {
+                neighbor.neighbors.splice(neighbor.neighbors.indexOf(c_active_cell), 1)
+                g_edges_count--
+            }
+        }
+    }
+    if (key === 'Enter') {
+        if (checkGame()) {
+            if (c_active_cell) {
+                c_active_cell.flipState()
+            }
+            g_game_state = IN_GAME
+        } else {
+            alert('游戏参数不正确!')
+        }
+    }
+}
+
 function mouseDragHandler() {
     if (g_game_state === BEFORE_GAME && mouseIsPressed && c_press_cell) {
         if (mouseButton === LEFT) {
@@ -161,10 +197,6 @@ function isNear() {
     return false
 }
 
-function mouseMoved() {
-    getInCell()
-}
-
 function checkGame() {
     let sum = 0
     for (let cell of c_cells) {
@@ -189,38 +221,6 @@ function checkWin() {
         console.log('游戏成功！')
     } else {
         g_bkcolor = color(180)
-    }
-}
-
-function keyPressed() {
-    if (c_active_cell && g_game_state === BEFORE_GAME) {
-        if (key >= '0' && key <= '9') {
-            if (c_active_cell.new_input) {
-                c_active_cell.num = parseInt(key)
-                c_active_cell.new_input = false
-            } else {
-                c_active_cell.num = parseInt('' + c_active_cell.num + key)
-            }
-            c_active_cell.show_num = true
-        } else if (key === '-') {
-            c_active_cell.num = -c_active_cell.num
-        } else if (key === 'Delete') {
-            c_cells.splice(c_cells.indexOf(c_active_cell), 1)
-            for (let neighbor of c_active_cell.neighbors) {
-                neighbor.neighbors.splice(neighbor.neighbors.indexOf(c_active_cell), 1)
-                g_edges_count--
-            }
-        }
-    }
-    if (key === 'Enter') {
-        if (checkGame()) {
-            if (c_active_cell) {
-                c_active_cell.flipState()
-            }
-            g_game_state = IN_GAME
-        } else {
-            alert('游戏参数不正确!')
-        }
     }
 }
 

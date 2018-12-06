@@ -38,10 +38,6 @@ class Cell {
         }
     }
 
-    flipState() {
-        this.active = !this.active
-    }
-
     showLink() {
         for (let neighor of this.neighbors) {
             if (this.index < neighor.index) {
@@ -54,5 +50,9 @@ class Cell {
         stroke(0)
         strokeWeight(5)
         line(cell_a.pos.x, cell_a.pos.y, cell_b.pos.x, cell_b.pos.y)
+    }
+
+    flipState() {
+        this.active = !this.active
     }
 }
