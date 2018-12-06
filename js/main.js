@@ -6,6 +6,7 @@ const BACKWARD = false
 let g_game_state = BEFORE_GAME
 let g_edges_count = 0
 let g_cell_index = 0
+let g_bkcolor
 let c_active_cell
 let c_drag_cell
 let c_press_cell
@@ -19,10 +20,12 @@ let a_direction = FORWARD
 function setup() {
     createCanvas(1024, 768)
     c_drag_cell = new Cell(0, 0, null)
+    g_bkcolor = color(180)
+    createDefaultGame()
 }
 
 function draw() {
-    background(180)
+    background(g_bkcolor)
     mouseDragHandler()
     for (let cell of c_cells) {
         cell.showLink()
@@ -82,6 +85,7 @@ function mouseReleased() {
                 }
             }
             if (!isNear()) {
+                console.log(c_press_cell)
                 let new_cell = new Cell(mouseX, mouseY, g_cell_index++)
                 c_cells.push(new_cell)
                 c_press_cell.neighbors.push(new_cell)
@@ -181,7 +185,10 @@ function checkWin() {
         }
     }
     if (win) {
+        g_bkcolor = color(0, 180, 0)
         console.log('游戏成功！')
+    } else {
+        g_bkcolor = color(180)
     }
 }
 
