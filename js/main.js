@@ -17,7 +17,7 @@ function preload() {
 }
 
 function setup() {
-    createCanvas(windowWidth, windowHeight)
+    createCanvas(windowWidth, windowHeight - 50)
     cell_dragged = new Cell(0, 0)
     background_color = 255
     createDefaultGame()
@@ -161,7 +161,7 @@ function keyPressed() {
 }
 
 function windowResized() {
-    resizeCanvas(windowWidth, windowHeight)
+    resizeCanvas(windowWidth, windowHeight - 50)
 }
 
 function mouseDragHandler() {
