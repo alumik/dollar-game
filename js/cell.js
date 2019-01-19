@@ -18,29 +18,30 @@ class Cell {
 
     showAt(size, color, text_color) {
         noStroke()
-        fill(color)
-        ellipse(this.pos.x, this.pos.y, size, size)
+
+        if (this.mouse_in) {
+            fill(255, 255, 0, 160)
+            ellipse(this.pos.x, this.pos.y, size * 1.3, size * 1.3)
+        }
+
+        if (this.active) {
+            fill(255, 255, 0)
+            ellipse(this.pos.x, this.pos.y, size, size)
+        } else {
+            fill(color)
+            ellipse(this.pos.x, this.pos.y, size, size)
+        }
 
         if (this.show_num) {
             textAlign(CENTER, CENTER)
             textFont(font)
             textSize(this.text_size)
-            fill(text_color)
+            if (this.active) {
+                fill(49)
+            } else {
+                fill(text_color)
+            }
             text(this.num, this.pos.x, this.pos.y)
-        }
-
-        if (this.active) {
-            stroke(0, 255, 0)
-            strokeWeight(3)
-            noFill()
-            ellipse(this.pos.x, this.pos.y, size, size)
-        }
-
-        if (this.mouse_in) {
-            stroke(255, 255, 0)
-            strokeWeight(3)
-            noFill()
-            ellipse(this.pos.x, this.pos.y, size, size)
         }
     }
 
