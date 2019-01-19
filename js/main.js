@@ -56,7 +56,7 @@ function mousePressed() {
         }
         cell_active = null
         let current_cell = getCell()
-        if (mouseButton === LEFT) {
+        if (mouseButton === RIGHT) {
             if (current_cell) {
                 cell_pressed = current_cell
             } else if (!nearCell()) {
@@ -64,7 +64,7 @@ function mousePressed() {
                 cells.push(new_cell)
                 cell_pressed = new_cell
             }
-        } else if (mouseButton === RIGHT) {
+        } else if (mouseButton === LEFT) {
             cell_pressed = current_cell
         }
     } else if (game_stage === IN_GAME) {
@@ -77,7 +77,7 @@ function mousePressed() {
 
 function mouseReleased() {
     if (game_stage === BEFORE_GAME) {
-        if (mouseButton === LEFT && cell_pressed) {
+        if (mouseButton === RIGHT && cell_pressed) {
             let current_cell = getCell()
             if (current_cell) {
                 if (current_cell === cell_pressed) {
@@ -166,14 +166,14 @@ function windowResized() {
 
 function mouseDragHandler() {
     if (game_stage === BEFORE_GAME && mouseIsPressed && cell_pressed) {
-        if (mouseButton === LEFT) {
+        if (mouseButton === RIGHT) {
             if (dist(mouseX, mouseY, cell_pressed.pos.x, cell_pressed.pos.y) > cell_pressed.size / 2) {
                 cell_dragged.pos.x = mouseX
                 cell_dragged.pos.y = mouseY
                 Cell.showEdge(cell_pressed, cell_dragged)
                 cell_dragged.show()
             }
-        } else if (mouseButton === RIGHT) {
+        } else if (mouseButton === LEFT) {
             cell_pressed.pos.x = mouseX
             cell_pressed.pos.y = mouseY
         }
