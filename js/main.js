@@ -13,7 +13,7 @@ let cell_pressed
 let animations = []
 
 function preload() {
-    font = loadFont('font/AmericanTypewriterStd-Med.otf')
+    font = loadFont('fonts/AmericanTypewriterStd-Med.otf')
 }
 
 function setup() {
